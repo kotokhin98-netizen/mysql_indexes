@@ -1,0 +1,48 @@
+2026-11-19T09:15:20.906161Z	   11 Connect	root@localhost on  using Socket
+2026-11-19T09:15:20.906421Z	   11 Query	select @@version_comment limit 1
+2026-11-19T09:15:26.893048Z	   11 Query	CREATE DATABASE index_practice CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+2026-11-19T09:15:26.941834Z	   11 Query	SELECT DATABASE()
+2026-11-19T09:17:34.602063Z	   11 Init DB	index_practice
+2026-11-19T09:17:34.602802Z	   11 Query	show databases
+2026-11-19T09:17:34.606328Z	   11 Query	show tables
+2026-11-19T09:17:34.609650Z	   11 Query	CREATE TABLE customers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    city VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+2026-11-19T09:15:27.091751Z	   11 Query	CREATE TABLE orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    order_date DATE NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    status VARCHAR(20) DEFAULT 'new',
+    FOREIGN KEY (customer_id) REFERENCES customers(id)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+2026-11-19T09:15:27.190489Z	   11 Query	INSERT INTO customers (name, email, city) VALUES
+  ('Иван Иванов', 'ivan@example.com', 'Москва'),
+  ('Пётр Петров', 'petr@example.com', 'Санкт-Петербург'),
+  ('Мария Сидорова', 'maria@example.com', 'Москва'),
+  ('Алексей Смирнов', 'alex@example.com', 'Казань'),
+  ('Ольга Кузнецова', 'olga@example.com', 'Новосибирск')
+2026-11-19T09:15:27.994276Z	   11 Query	INSERT INTO orders (customer_id, order_date, amount, status) VALUES
+  (1, '2026-10-01', 1500.00, 'paid'),
+  (1, '2026-10-05', 2300.50, 'paid'),
+  (2, '2026-10-03', 800.00, 'new'),
+  (3, '2026-10-07', 4200.00, 'paid'),
+  (3, '2026-10-10', 1100.00, 'cancelled'),
+  (4, '2026-10-12', 950.00, 'new')
+2026-11-19T09:15:37.532196Z	   11 Query	SHOW INDEX FROM orders
+2026-11-19T09:17:32.736248Z	   11 Query	EXPLAIN SELECT * FROM orders WHERE amount > 1000
+2026-11-19T09:17:49.713658Z	   11 Query	CREATE INDEX idx_amount ON orders(amount)
+2026-11-19T09:17:50.477381Z	   11 Query	EXPLAIN SELECT * FROM orders WHERE amount > 1000
+2026-11-19T09:18:04.396366Z	   11 Query	EXPLAIN SELECT * FROM orders WHERE YEAR(order_date) = 2026
+2026-11-19T09:18:10.498037Z	   11 Query	CREATE INDEX idx_order_date ON orders(order_date)
+2026-11-19T09:18:11.281654Z	   11 Query	EXPLAIN SELECT * FROM orders WHERE order_date >= '2026-01-01' AND order_date < '2027-01-01'
+2026-11-19T09:18:24.293164Z	   11 Query	CREATE INDEX idx_status_amount ON orders(status, amount)
+2026-11-19T09:18:24.362024Z	   11 Query	EXPLAIN SELECT * FROM orders WHERE status = 'paid'
+2026-11-19T09:18:24.978214Z	   11 Query	EXPLAIN SELECT * FROM orders WHERE status = 'paid' AND amount > 1000
+2026-11-19T09:18:31.770696Z	   11 Query	CREATE INDEX idx_customer_amount ON orders(customer_id, amount)
+2026-11-19T09:18:32.608373Z	   11 Query	EXPLAIN SELECT customer_id, SUM(amount) FROM orders GROUP BY customer_id
+2026-11-19T09:19:47.256095Z	   11 Quit	

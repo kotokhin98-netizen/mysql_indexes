@@ -1,0 +1,18 @@
+2026-11-19T09:15:26.893048Z	   11 Query	CREATE DATABASE index_practice CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+2026-11-19T09:15:26.941834Z	   11 Query	SELECT DATABASE()
+2026-11-19T09:17:34.609650Z	   11 Query	CREATE TABLE customers (
+2026-11-19T09:15:27.091751Z	   11 Query	CREATE TABLE orders (
+2026-11-19T09:15:27.190489Z	   11 Query	INSERT INTO customers (name, email, city) VALUES
+2026-11-19T09:15:27.994276Z	   11 Query	INSERT INTO orders (customer_id, order_date, amount, status) VALUES
+2026-11-19T09:15:37.532196Z	   11 Query	SHOW INDEX FROM orders
+2026-11-19T09:17:32.736248Z	   11 Query	EXPLAIN SELECT * FROM orders WHERE amount > 1000
+2026-11-19T09:17:49.713658Z	   11 Query	CREATE INDEX idx_amount ON orders(amount)
+2026-11-19T09:17:50.477381Z	   11 Query	EXPLAIN SELECT * FROM orders WHERE amount > 1000
+2026-11-19T09:18:04.396366Z	   11 Query	EXPLAIN SELECT * FROM orders WHERE YEAR(order_date) = 2026
+2026-11-19T09:18:10.498037Z	   11 Query	CREATE INDEX idx_order_date ON orders(order_date)
+2026-11-19T09:18:11.281654Z	   11 Query	EXPLAIN SELECT * FROM orders WHERE order_date >= '2026-01-01' AND order_date < '2027-01-01'
+2026-11-19T09:18:24.293164Z	   11 Query	CREATE INDEX idx_status_amount ON orders(status, amount)
+2026-11-19T09:18:24.362024Z	   11 Query	EXPLAIN SELECT * FROM orders WHERE status = 'paid'
+2026-11-19T09:18:24.978214Z	   11 Query	EXPLAIN SELECT * FROM orders WHERE status = 'paid' AND amount > 1000
+2026-11-19T09:18:31.770696Z	   11 Query	CREATE INDEX idx_customer_amount ON orders(customer_id, amount)
+2026-11-19T09:18:32.608373Z	   11 Query	EXPLAIN SELECT customer_id, SUM(amount) FROM orders GROUP BY customer_id
